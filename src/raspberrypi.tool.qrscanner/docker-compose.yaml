@@ -1,27 +1,9 @@
 services:
-  # qrscanner:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #     # target architecture
-  #   platform: linux/arm64
-  #   image: tool.qrscanner:arm64
-  #   # map camera device(s)
-  #   devices:
-  #     - /dev/video0:/dev/video0
-  #     - /dev/media0:/dev/media0
-  #   # add the video group so process can access camera device
-  #   group_add:
-  #     - "video"
-  #   # If you want the container to use host networking (easier for some camera libs), uncomment:
-  #   # network_mode: "host"
-  #   environment:
-  #     - URLS=${URLS}  # set when running or in .env file
-  #   # fallback: if permissions are stubborn, set privileged: true (not recommended for production)
-  #   # privileged: false
-
   qr-scanner:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile      
+    # platform: linux/arm64
     container_name: qr-scanner-service
     privileged: true
     devices:
