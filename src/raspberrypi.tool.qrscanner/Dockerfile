@@ -25,14 +25,11 @@ RUN apt-get update && apt-get install -y \
 # Create app directory
 WORKDIR /app
 
-# Copy published application
-COPY bin/Release/net8.0/linux-arm64/publish/ .
+# Copy published application from the build context
+COPY publish/ .
 
 # Set environment variables for camera access
 ENV LD_LIBRARY_PATH=/usr/lib/aarch64-linux-gnu
 ENV DISPLAY=:0
-
-# Enable camera device access
-VOLUME /dev/video0:/dev/video0
 
 ENTRYPOINT ["./raspberrypi.tool.qrscanner"]

@@ -1,9 +1,6 @@
 services:
   qr-scanner:
-    build:
-      context: .
-      dockerfile: Dockerfile      
-    # platform: linux/arm64
+    image: qr-scanner-service
     container_name: qr-scanner-service
     privileged: true
     devices:
