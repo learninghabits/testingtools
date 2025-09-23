@@ -1,0 +1,6 @@
+@raspberrypi.tool.qrscanner_HostAddress = http://localhost:5016
+
+GET {{raspberrypi.tool.qrscanner_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
