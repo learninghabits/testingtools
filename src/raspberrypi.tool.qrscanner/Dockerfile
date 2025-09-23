@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/dotnet/runtime:8.0
 
-# Install dependencies for OpenCV and camera
+# Install only essential dependencies for OpenCV and camera
 RUN apt-get update && apt-get install -y \
     libgdiplus \
     libc6-dev \
@@ -10,22 +10,19 @@ RUN apt-get update && apt-get install -y \
     gstreamer1.0-plugins-bad \
     gstreamer1.0-plugins-ugly \
     gstreamer1.0-libav \
-    gstreamer1.0-doc \
     gstreamer1.0-tools \
     gstreamer1.0-x \
     gstreamer1.0-alsa \
-    gstreamer1.0-gl \
-    gstreamer1.0-gtk3 \
-    gstreamer1.0-qt5 \
-    gstreamer1.0-pulseaudio \
     libopencv-dev \
     python3-opencv \
+    v4l-utils \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Create app directory
 WORKDIR /app
 
-# Copy published application from the build context
+# Copy published application
 COPY publish/ .
 
 # Set environment variables for camera access
