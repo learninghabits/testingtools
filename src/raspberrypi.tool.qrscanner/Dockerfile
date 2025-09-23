@@ -18,6 +18,8 @@ RUN apt-get update && apt-get install -y \
     libopencv-dev \
     python3-opencv \
     v4l-utils \
+    libgdiplus \
+    libc6-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -26,4 +28,4 @@ WORKDIR /app
 # Copy from build stage
 COPY --from=build /app/publish .
 
-ENTRYPOINT ["./raspberrypi.tool.qrscanner"]
+ENTRYPOINT ["dotnet", "raspberrypi.tool.qrscanner.dll"]
