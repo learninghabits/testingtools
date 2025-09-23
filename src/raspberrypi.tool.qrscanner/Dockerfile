@@ -28,4 +28,5 @@ WORKDIR /app
 # Copy from build stage
 COPY --from=build /app/publish .
 
-ENTRYPOINT ["dotnet", "raspberrypi.tool.qrscanner.dll"]
+#ENTRYPOINT ["dotnet", "raspberrypi.tool.qrscanner.dll"]
+ENTRYPOINT ["./raspberrypi.tool.qrscanner"]
