@@ -3,8 +3,6 @@
 # Exit on error
 set -e
 
-mkdir -p publish
-
 echo "Building .NET application..."
 # Clean previous builds
 dotnet clean
