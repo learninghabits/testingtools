@@ -1,32 +1,28 @@
-# Multi-stage build
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
-
-# Copy project files
-COPY *.csproj .
-RUN dotnet restore
-
-# Copy everything else and build
-COPY . .
-RUN dotnet publish -c Release -r linux-arm64 --self-contained true -o /app/publish
-
-# Runtime stage
 FROM mcr.microsoft.com/dotnet/runtime:8.0
 
-# Install only essential dependencies for OpenCV and camera
+# Install system OpenCV and dependencies
 RUN apt-get update && apt-get install -y \
-    libopencv-dev \
+    libopencv-core4.5 \
+    libopencv-imgproc4.5 \
+    libopencv-imgcodecs4.5 \
+    libopencv-videoio4.5 \
+    libopencv-highgui4.5 \
     python3-opencv \
     v4l-utils \
-    libgdiplus \
-    libc6-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Create symbolic links that OpenCvSharp expects
+RUN ln -sf /usr/lib/aarch64-linux-gnu/libopencv_core.so.4.5 /usr/lib/aarch64-linux-gnu/libopencv_core.so && \
+    ln -sf /usr/lib/aarch64-linux-gnu/libopencv_imgproc.so.4.5 /usr/lib/aarch64-linux-gnu/libopencv_imgproc.so && \
+    ln -sf /usr/lib/aarch64-linux-gnu/libopencv_imgcodecs.so.4.5 /usr/lib/aarch64-linux-gnu/libopencv_imgcodecs.so && \
+    ln -sf /usr/lib/aarch64-linux-gnu/libopencv_videoio.so.4.5 /usr/lib/aarch64-linux-gnu/libopencv_videoio.so && \
+    ln -sf /usr/lib/aarch64-linux-gnu/libopencv_highgui.so.4.5 /usr/lib/aarch64-linux-gnu/libopencv_highgui.so
+
 WORKDIR /app
+COPY publish/ .
 
-# Copy from build stage
-COPY --from=build /app/publish .
+# Set library path
+ENV LD_LIBRARY_PATH=/usr/lib/aarch64-linux-gnu
 
-#ENTRYPOINT ["dotnet", "raspberrypi.tool.qrscanner.dll"]
 ENTRYPOINT ["./raspberrypi.tool.qrscanner"]
