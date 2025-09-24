@@ -6,5 +6,5 @@ sudo apt-get update --fix-missing && apt-get install -y wget tar \
     && chmod +x dotnet-install.sh
 
 # Install .NET 8 runtime and clean up
-./dotnet-install.sh --runtime dotnet --version 8.0.0
-rm dotnet-install.sh
+sudo ./dotnet-install.sh --runtime dotnet --version 8.0.0
+sudo rm dotnet-install.sh
