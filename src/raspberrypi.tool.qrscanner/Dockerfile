@@ -1,42 +1,27 @@
 # Multi-stage build
 FROM --platform=linux/arm/v7 mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
-# Install .NET 8 runtime manually
-# Download the script first
-RUN apt-get update && apt-get install -y wget tar \
-    && wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh \
-    && chmod +x dotnet-install.sh
-
-# Execute the script in a separate RUN command
-RUN ./dotnet-install.sh --runtime dotnet --version 8.0.0 --architecture arm \
-    && rm dotnet-install.sh
-    
 WORKDIR /src
-
 COPY *.csproj .
 RUN dotnet restore
 
 COPY . .
 RUN dotnet publish -c Release -r linux-arm --self-contained true -o /app/publish
 
-# Use Debian base for better Raspberry Pi compatibility
-FROM --platform=linux/arm/v7 debian:bookworm-slim
+# Use Raspberry Pi OS base image for proper Raspberry Pi compatibility
+FROM --platform=linux/arm/v7 balenalib/raspberrypi3-debian:bookworm
 
-# Install OpenCV and camera dependencies
+# Install dependencies from proper Raspberry Pi repositories
 RUN apt-get update && apt-get install -y \
     libopencv-dev \
     python3-opencv \
     v4l-utils \
-    # Raspberry Pi specific
-    libraspberrypi0 \
+    libraspberrypi-bin \
+    libraspberrypi-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 COPY --from=build /app/publish .
-
-ENV DOTNET_ROOT=/root/.dotnet
-ENV PATH=$PATH:/root/.dotnet
-ENV LD_LIBRARY_PATH=/opt/vc/lib:/usr/lib/arm-linux-gnueabihf
 
 ENTRYPOINT ["./raspberrypi.tool.qrscanner"]
