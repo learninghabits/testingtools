@@ -1,0 +1,14 @@
+[Unit]
+Description=GPIO Controller API
+After=network.target
+
+[Service]
+Type=exec
+User=pi
+WorkingDirectory=/home/pi/gpio-api
+ExecStart=/home/pi/dotnet/dotnet /home/pi/gpio-api/raspberrypi.tool.gpio.dll
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

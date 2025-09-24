@@ -16,4 +16,8 @@
 		<PackageReference Include="OpenCvSharp4.runtime.linux-arm" Version="4.11.0.20250506" />
 		<PackageReference Include="System.Text.Json" Version="9.0.9" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Controllers\" />
+	</ItemGroup>
 </Project>

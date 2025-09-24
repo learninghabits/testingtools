@@ -1,0 +1,6 @@
+@raspberrypi.tool.gpio_HostAddress = http://localhost:5290
+
+GET {{raspberrypi.tool.gpio_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

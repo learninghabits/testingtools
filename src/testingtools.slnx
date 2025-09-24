@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/raspberrypi/">
+    <Project Path="raspberrypi.tool.gpio/raspberrypi.tool.gpio.csproj" />
     <Project Path="raspberrypi.tool.qrscanner/raspberrypi.tool.qrscanner.csproj" />
   </Folder>
 </Solution>
