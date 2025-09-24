@@ -1,28 +1,40 @@
-FROM mcr.microsoft.com/dotnet/runtime:8.0
+# Multi-stage build
+FROM --platform=linux/arm/v7 mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
 
-# Install system OpenCV and dependencies
+COPY *.csproj .
+RUN dotnet restore
+
+COPY . .
+RUN dotnet publish -c Release -r linux-arm --self-contained true -o /app/publish
+
+# Use Debian base for better Raspberry Pi compatibility
+FROM --platform=linux/arm/v7 debian:bookworm-slim
+
+# Install .NET 8 runtime manually
 RUN apt-get update && apt-get install -y \
-    libopencv-core4.5 \
-    libopencv-imgproc4.5 \
-    libopencv-imgcodecs4.5 \
-    libopencv-videoio4.5 \
-    libopencv-highgui4.5 \
+    wget \
+    tar \
+    && wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh \
+    && chmod +x dotnet-install.sh \
+    && ./dotnet-install.sh --runtime dotnet --version 8.0.0 --architecture arm \
+    && rm dotnet-install.sh
+
+# Install OpenCV and camera dependencies
+RUN apt-get update && apt-get install -y \
+    libopencv-dev \
     python3-opencv \
     v4l-utils \
+    # Raspberry Pi specific
+    libraspberrypi0 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Create symbolic links that OpenCvSharp expects
-RUN ln -sf /usr/lib/aarch64-linux-gnu/libopencv_core.so.4.5 /usr/lib/aarch64-linux-gnu/libopencv_core.so && \
-    ln -sf /usr/lib/aarch64-linux-gnu/libopencv_imgproc.so.4.5 /usr/lib/aarch64-linux-gnu/libopencv_imgproc.so && \
-    ln -sf /usr/lib/aarch64-linux-gnu/libopencv_imgcodecs.so.4.5 /usr/lib/aarch64-linux-gnu/libopencv_imgcodecs.so && \
-    ln -sf /usr/lib/aarch64-linux-gnu/libopencv_videoio.so.4.5 /usr/lib/aarch64-linux-gnu/libopencv_videoio.so && \
-    ln -sf /usr/lib/aarch64-linux-gnu/libopencv_highgui.so.4.5 /usr/lib/aarch64-linux-gnu/libopencv_highgui.so
-
 WORKDIR /app
-COPY publish/ .
+COPY --from=build /app/publish .
 
-# Set library path
-ENV LD_LIBRARY_PATH=/usr/lib/aarch64-linux-gnu
+ENV DOTNET_ROOT=/root/.dotnet
+ENV PATH=$PATH:/root/.dotnet
+ENV LD_LIBRARY_PATH=/opt/vc/lib:/usr/lib/arm-linux-gnueabihf
 
 ENTRYPOINT ["./raspberrypi.tool.qrscanner"]

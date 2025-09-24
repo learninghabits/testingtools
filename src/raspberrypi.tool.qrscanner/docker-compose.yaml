@@ -1,18 +1,39 @@
 services:
   qr-scanner:
-    image: qr-scanner-service
+    build: 
+      context: .
+    platform: linux/arm/v7
     container_name: qr-scanner-service
     privileged: true
     devices:
+      # Camera device for Raspberry Pi OS legacy camera stack
       - "/dev/video0:/dev/video0"
+      # Raspberry Pi camera MMAL interface
       - "/dev/vchiq:/dev/vchiq"
+      # GPU memory device
+      - "/dev/gpiomem:/dev/gpiomem"
     volumes:
+      # Raspberry Pi firmware libraries
       - /opt/vc/lib:/opt/vc/lib
+      # Optional: mount for persistent data
+      - ./data:/app/data
     environment:
-      - LD_LIBRARY_PATH=/opt/vc/lib
+      - LD_LIBRARY_PATH=/opt/vc/lib:/usr/lib/arm-linux-gnueabihf
+      - DISPLAY=:0
+      # Raspberry Pi specific environment variables
+      - VC4_DEBUG=0
     restart: unless-stopped
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
+    # Resource limits for Pi 3 (1GB RAM)
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+        reservations:
+          memory: 256M
+          cpus: '0.5'
