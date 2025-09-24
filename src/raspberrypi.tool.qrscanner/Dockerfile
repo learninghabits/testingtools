@@ -12,7 +12,7 @@ RUN dotnet publish -c Release -r linux-arm --self-contained true -o /app/publish
 FROM --platform=linux/arm/v7 balenalib/raspberrypi3-debian:bookworm
 
 # Install dependencies from proper Raspberry Pi repositories
-RUN apt-get update && apt-get install -y \
+RUN apt-get update --fix-missing && apt-get install -y \
     libopencv-dev \
     python3-opencv \
     v4l-utils \
