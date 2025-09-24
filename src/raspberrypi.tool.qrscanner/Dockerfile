@@ -14,14 +14,10 @@ FROM --platform=linux/arm/v7 balenalib/raspberrypi3-debian:bookworm
 # Install complete OpenCV and dependencies
 RUN apt-get update --fix-missing && \
     for package in \
-        libopencv-core4.5 \
-        libopencv-imgproc4.5 \
-        libopencv-imgcodecs4.5 \
-        libopencv-videoio4.5 \
-        libopencv-objdetect4.5 \
-        libopencv-highgui4.5 \
+        libopencv-dev \
         libtesseract-dev \
         tesseract-ocr \
+        tesseract-ocr-eng \
         v4l-utils \
         libv4l-dev \
         libjpeg-dev \
@@ -35,6 +31,8 @@ RUN apt-get update --fix-missing && \
         libsm6 \
         libxext6 \
         libx11-6 \
+        libglib2.0-0 \
+        libc6-dev \
     ; do \
         apt-get install -y "$package" || echo "Package $package not available, continuing..."; \
     done && \
