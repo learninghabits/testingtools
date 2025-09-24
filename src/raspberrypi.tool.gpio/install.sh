@@ -12,10 +12,9 @@ chmod +x dotnet-install.sh
 # Clean up
 rm dotnet-install.sh
 
-# Register dotnet command in PATH
-echo 'export DOTNET_ROOT=$HOME/.dotnet' >> ~/.bashrc
-echo 'export PATH=$PATH:$HOME/.dotnet' >> ~/.bashrc
-source ~/.bashrc
+# Add to PATH for current session
+export DOTNET_ROOT=$HOME/.dotnet
+export PATH=$PATH:$HOME/.dotnet
 
-# Verify installation
+# Test if it works now
 dotnet --version
