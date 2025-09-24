@@ -1,10 +1,13 @@
+# Update package list and install dependencies
+sudo apt-get update --fix-missing
+sudo apt-get install -y wget tar
 
-# Install .NET 8 runtime manually
-# Download the script first
-sudo apt-get update --fix-missing && apt-get install -y wget tar \
-    && wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh \
-    && chmod +x dotnet-install.sh
+# Download .NET install script
+wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
+chmod +x dotnet-install.sh
 
-# Install .NET 8 runtime and clean up
-sudo ./dotnet-install.sh --runtime dotnet --version 8.0.0
-sudo rm dotnet-install.sh
+# Install .NET 8 runtime
+./dotnet-install.sh --runtime dotnet --version 8.0.0
+
+# Clean up
+rm dotnet-install.sh
